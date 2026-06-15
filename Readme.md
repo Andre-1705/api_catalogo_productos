@@ -74,11 +74,24 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 - Extracción de rutas a archivo independiente
 - index.js se convierte en archivo de configuración del servidor
 
+> Etapa 4 - Controllers (branch: 04-controllers) COMPLETADA
+
+- Separación de la lógica de negocio de las rutas
+- Creación de capa de controladores
+- Organización del código dentro de src/
+
+> Etapa 5 - Services (branch: 05-services) COMPLETADA
+
+- Separación de la lógica de datos de los controladores
+- Creación de capa de servicios
+- Los controladores solo validan y devuelven respuestas
+- Los servicios manejan los datos (array en memoria temporal)
+
 > Etapas pendientes
 
+- Modelo de datos (models/)
 - Conexión con Firebase Firestore
-- Modelo de datos
-- Capa de servicios
-- Capa de controladores
+- Configuración de dotenv
 - Autenticación JWT
 - Seeder de datos
+  
