@@ -1,45 +1,38 @@
+import db from '../config/firebase.js';
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { Product } from '../models/products.model.js';
 
-// Base de datos en memoria (temporal)
-let productos = [
-  { id: 1, nombre: 'Silvatos de emergencia', precio: 120000, categoria: 'Disuasivos', stock: 10 },
-  { id: 2, nombre: 'Llaveros de autodefensa', precio: 450000, categoria: 'Autodefensa', stock: 15 },
-  { id: 3, nombre: 'Sprays de defensa personal', precio: 850000, categoria: 'Regulados', stock: 30 }
-];
-
-let nextId = 4;
+const productosRef = collection(db, 'products');
 
 // Obtener todos los productos
-export const getAll = () => {
-  return productos;
+export const getAll = async () => {
+  const snapshot = await getDocs(productosRef);
+  return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 };
 
 // Obtener un producto por ID
-export const getById = (id) => {
-  return productos.find(p => p.id === id) || null;
+export const getById = async (id) => {
+  const docSnap = await getDoc(doc(db, 'products', id));
+  if (!docSnap.exists()) return null;
+  return { id: docSnap.id, ...docSnap.data() };
 };
 
 // Crear un nuevo producto
-export const create = (data) => {
+export const create = async (data) => {
   const producto = new Product(data);
-  const nuevoProducto = { id: nextId++, ...producto };
-  productos.push(nuevoProducto);
-  return nuevoProducto;
+  const docRef = await addDoc(productosRef, { ...producto });
+  return { id: docRef.id, ...producto };
 };
 
 // Actualizar un producto completo
-export const update = (id, data) => {
-  const index = productos.findIndex(p => p.id === id);
-  if (index === -1) return null;
+export const update = async (id, data) => {
   const producto = new Product(data);
-  productos[index] = { id, ...producto };
-  return productos[index];
+  await updateDoc(doc(db, 'products', id), { ...producto });
+  return { id, ...producto };
 };
 
 // Eliminar un producto
-export const remove = (id) => {
-  const index = productos.findIndex(p => p.id === id);
-  if (index === -1) return false;
-  productos.splice(index, 1);
+export const remove = async (id) => {
+  await deleteDoc(doc(db, 'products', id));
   return true;
 };

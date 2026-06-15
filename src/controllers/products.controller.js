@@ -1,50 +1,71 @@
 import { getAll, getById, create, update, remove } from '../services/products.service.js';
 
-// Obtener todos los productosls
-export const getAllProducts = (req, res) => {
-  res.json(getAll());
+// Obtener todos los productos
+export const getAllProducts = async (req, res) => {
+  try {
+    const productos = await getAll();
+    res.json(productos);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener productos' });
+  }
 };
 
 // Obtener un producto por ID
-export const getProductById = (req, res) => {
-  const id = parseInt(req.params.id);
-  const producto = getById(id);
-  if (!producto) {
-    return res.status(404).json({ error: 'Producto no encontrado' });
+export const getProductById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const producto = await getById(id);
+    if (!producto) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener producto' });
   }
-  res.json(producto);
 };
 
 // Crear un nuevo producto
-export const createProduct = (req, res) => {
-  const { nombre, precio, categoria, stock } = req.body;
-  if (!nombre || precio === undefined) {
-    return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
+export const createProduct = async (req, res) => {
+  try {
+    const { nombre, precio, categoria, stock } = req.body;
+    if (!nombre || precio === undefined) {
+      return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
+    }
+    const nuevoProducto = await create({ nombre, precio, categoria, stock });
+    res.status(201).json(nuevoProducto);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al crear producto' });
   }
-  const nuevoProducto = create({ nombre, precio, categoria, stock });
-  res.status(201).json(nuevoProducto);
 };
 
 // Actualizar un producto completo
-export const updateProduct = (req, res) => {
-  const id = parseInt(req.params.id);
-  const { nombre, precio, categoria, stock } = req.body;
-  if (!nombre || precio === undefined) {
-    return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
+export const updateProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { nombre, precio, categoria, stock } = req.body;
+    if (!nombre || precio === undefined) {
+      return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
+    }
+    const producto = await update(id, { nombre, precio, categoria, stock });
+    if (!producto) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar producto' });
   }
-  const producto = update(id, { nombre, precio, categoria, stock });
-  if (!producto) {
-    return res.status(404).json({ error: 'Producto no encontrado' });
-  }
-  res.json(producto);
 };
 
 // Eliminar un producto
-export const deleteProduct = (req, res) => {
-  const id = parseInt(req.params.id);
-  const eliminado = remove(id);
-  if (!eliminado) {
-    return res.status(404).json({ error: 'Producto no encontrado' });
+export const deleteProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const eliminado = await remove(id);
+    if (!eliminado) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.json({ mensaje: 'Producto eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar producto' });
   }
-  res.json({ mensaje: 'Producto eliminado correctamente' });
 };

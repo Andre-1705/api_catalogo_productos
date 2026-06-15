@@ -87,11 +87,59 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 - Los controladores solo validan y devuelven respuestas
 - Los servicios manejan los datos (array en memoria temporal)
 
+> Etapa 6 - Models (branch: 06-models) COMPLETADA
+
+- Creación de capa de modelos con clase Product
+- Define la estructura de la entidad Producto con valores por defecto
+- El servicio usa el modelo para crear objetos en vez de armarlos a mano
+
+> Etapa 7 - Firebase + dotenv (branch: 07-firebase) COMPLETADA
+
+- Configuración de Firebase con credenciales en .env
+- Creación de src/config/firebase.js para conexión
+- Servicio reemplaza array en memoria por Firestore
+- Controladores pasan a async/await con try/catch
+- IDs pasan de números (parseInt) a strings (Firestore document IDs)
+
 > Etapas pendientes
 
-- Modelo de datos (models/)
+- Seeder de datos
+- Autenticación JWT
+
+> Manejo de undefined y validaciones:
+
+| Escenario  |  nombre |  precio |!nombre | precio === undefined |   Pasa?    |
+|------------|---------|---------|--------|----------------------|------------|
+|Todo ok     | 'Spray' |   5000  | false  |         false        |    SI      |
+|Sin nombre  |undefined|   5000  |  true  |         false        |  NO (400)  |
+|Sin precio  | 'Spray' |undefined| false  |         true         |  NO (400)  |
+|Sin ambos   |undefined|undefined|  true  |         true         |  NO (400)  |
+|Precio cero | 'Spray' |   0     | false  |         false        |    SI      |
+|Nombre vacío|   ''    |   5000  |  true  |         false        |  NO (400)  |
+
+!nombre atrapa undefined, null, '' (vacío) y false
+precio === undefined solo atrapa cuando NO se envió el campo
+Se usa !nombre porque no aceptamos nombre vacío
+Se usa === undefined en precio porque 0 podría ser válido
+Evita doble validación
+
+> Etapas pendientes
+
 - Conexión con Firebase Firestore
 - Configuración de dotenv
 - Autenticación JWT
 - Seeder de datos
-  
+
+> Delimitación de responsabilidades utilizadas en este proyecto
+
+Router: recibe la petición HTTP y la pasa al controller
+Controller: extrae los datos del request, valida, y llama al service
+Service: es el que habla con la base de datos. Le pide/ordena guardar/buscar
+Model: le da forma a los datos. Es el molde.
+
+A modo de ejemplo:
+
+Llega un POST con { nombre: 'Spray', precio: 5000 }
+El `controller` extrae esos datos del body y los manda al `service` como **data**
+El service crea un `objeto` usando el modelo: new Product(**data**) → el modelo arma { nombre: 'Spray', precio: 5000, categoria: 'general', stock: 0 }
+El `service` guarda ese `objeto` en la base de datos (hoy en el array, después en Firestore)
