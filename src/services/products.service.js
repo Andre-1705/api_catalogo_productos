@@ -1,3 +1,5 @@
+import { Product } from '../models/products.model.js';
+
 // Base de datos en memoria (temporal)
 let productos = [
   { id: 1, nombre: 'Silvatos de emergencia', precio: 120000, categoria: 'Disuasivos', stock: 10 },
@@ -19,13 +21,8 @@ export const getById = (id) => {
 
 // Crear un nuevo producto
 export const create = (data) => {
-  const nuevoProducto = {
-    id: nextId++,
-    nombre: data.nombre,
-    precio: data.precio,
-    categoria: data.categoria || 'general',
-    stock: data.stock || 0
-  };
+  const producto = new Product(data);
+  const nuevoProducto = { id: nextId++, ...producto };
   productos.push(nuevoProducto);
   return nuevoProducto;
 };
@@ -34,13 +31,8 @@ export const create = (data) => {
 export const update = (id, data) => {
   const index = productos.findIndex(p => p.id === id);
   if (index === -1) return null;
-  productos[index] = {
-    id,
-    nombre: data.nombre,
-    precio: data.precio,
-    categoria: data.categoria || productos[index].categoria,
-    stock: data.stock !== undefined ? data.stock : productos[index].stock
-  };
+  const producto = new Product(data);
+  productos[index] = { id, ...producto };
   return productos[index];
 };
 

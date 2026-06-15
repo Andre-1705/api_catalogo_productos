@@ -1,6 +1,6 @@
 import { getAll, getById, create, update, remove } from '../services/products.service.js';
 
-// Obtener todos los productos
+// Obtener todos los productosls
 export const getAllProducts = (req, res) => {
   res.json(getAll());
 };
