@@ -22,11 +22,10 @@ npm install
 
 cp .env-example .env
 
-## Ejecución
+> Ejecución
 
 npm start (producción)
 npm run dev (desarrollo con --watch)
-
 
 El servidor corre en `http://localhost:3000`
 
@@ -44,7 +43,8 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 6. Mergear: `git merge 0X-nombre`
 7. Subir main: `git push origin main`
 
-Conceptos clave:
+> Conceptos clave:
+
 - **branch (rama)**: copia independiente del código para trabajar sin afectar main
 - **merge**: juntar los cambios de un branch en otro (generalmente en main)
 - **Fast-forward**: tipo de merge que ocurre cuando no hay cambios en main, simplemente mueve el puntero
@@ -69,7 +69,7 @@ Conceptos clave:
 - Middleware 404 para rutas inexistentes
 - Validación básica (nombre y precio obligatorios)
 
-> Etapa 3 - Rutas separadas (branch: 03-rutas-separadas)* EN PROGRESO
+> Etapa 3 - Rutas separadas (branch: 03-rutas-separadas)* COMPLETADA
 
 - Extracción de rutas a archivo independiente
 - index.js se convierte en archivo de configuración del servidor
@@ -82,36 +82,3 @@ Conceptos clave:
 - Capa de controladores
 - Autenticación JWT
 - Seeder de datos
-
-## Configuración
-
-Copiar el archivo `.env-example` a `.env` y completar con tus credenciales:
-
-> Iniciar el servidor:
-
-bash
-npm start
-
-El servidor arranca en `http://localhost:3000`.
-
-> Scripts disponibles:
-
-**`npm start` — ejecuta `node index.js`
-**`npm run dev` — ejecuta `node --watch index.js` (reinicio automático)
-
-## Etapa 1
-
-api-catalogo-productos/
-├── .env-example ← Nombres de variables (sin valor real)
-├── .gitignore   ← Ignora node_modules, .env, etc.
-├── index.js     ← Servidor Express básico (solo GET /)
-└── package.json ← type: "module", 6 depend, script start
-
-Qué hace index.js en esta etapa?
-
-Crea un servidor Express
-Tiene UNA sola ruta: GET / que devuelve un JSON
-Escucha en el puerto 3000 (o el que diga la variable PORT)
-Es lo más básico solo para confirmar que Express funciona.
-
-### Etapa 2

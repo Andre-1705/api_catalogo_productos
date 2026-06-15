@@ -1,7 +1,3 @@
-import { Router } from 'express';
-
-const router = Router();
-
 // Base de datos en memoria (temporal)
 let productos = [
   { id: 1, nombre: 'Silvatos de emergencia', precio: 120000, categoria: 'Disuasivos', stock: 10 },
@@ -11,23 +7,23 @@ let productos = [
 
 let nextId = 4;
 
-// GET / - Obtener todos
-router.get('/', (req, res) => {
+// Obtener todos los productos
+export const getAll = (req, res) => {
   res.json(productos);
-});
+};
 
-// GET /:id - Obtener uno por ID
-router.get('/:id', (req, res) => {
+// Obtener un producto por ID
+export const getById = (req, res) => {
   const id = parseInt(req.params.id);
   const producto = productos.find(p => p.id === id);
   if (!producto) {
     return res.status(404).json({ error: 'Producto no encontrado' });
   }
   res.json(producto);
-});
+};
 
-// POST / - Crear nuevo
-router.post('/', (req, res) => {
+// Crear un nuevo producto
+export const create = (req, res) => {
   const { nombre, precio, categoria, stock } = req.body;
   if (!nombre || precio === undefined) {
     return res.status(400).json({ error: 'Nombre y precio son obligatorios' });
@@ -41,10 +37,10 @@ router.post('/', (req, res) => {
   };
   productos.push(nuevoProducto);
   res.status(201).json(nuevoProducto);
-});
+};
 
-// PUT /:id - Actualizar completo
-router.put('/:id', (req, res) => {
+// Actualizar un producto completo
+export const update = (req, res) => {
   const id = parseInt(req.params.id);
   const index = productos.findIndex(p => p.id === id);
   if (index === -1) {
@@ -56,10 +52,10 @@ router.put('/:id', (req, res) => {
   }
   productos[index] = { id, nombre, precio, categoria: categoria || productos[index].categoria, stock: stock !== undefined ? stock : productos[index].stock };
   res.json(productos[index]);
-});
+};
 
-// DELETE /:id - Eliminar
-router.delete('/:id', (req, res) => {
+// Eliminar un producto
+export const remove = (req, res) => {
   const id = parseInt(req.params.id);
   const index = productos.findIndex(p => p.id === id);
   if (index === -1) {
@@ -67,6 +63,4 @@ router.delete('/:id', (req, res) => {
   }
   productos.splice(index, 1);
   res.json({ mensaje: 'Producto eliminado correctamente' });
-});
-
-export default router;
+};
