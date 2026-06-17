@@ -108,20 +108,20 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 
 > Manejo de undefined y validaciones:
 
-| Escenario  |  nombre |  precio |!nombre | precio === undefined |   Pasa?    |
-|------------|---------|---------|--------|----------------------|------------|
-|Todo ok     | 'Spray' |   5000  | false  |         false        |    SI      |
-|Sin nombre  |undefined|   5000  |  true  |         false        |  NO (400)  |
-|Sin precio  | 'Spray' |undefined| false  |         true         |  NO (400)  |
-|Sin ambos   |undefined|undefined|  true  |         true         |  NO (400)  |
-|Precio cero | 'Spray' |   0     | false  |         false        |    SI      |
-|Nombre vacío|   ''    |   5000  |  true  |         false        |  NO (400)  |
+| Escenario  |  nombre |  precio |!nombre |precio === undefined|  Pasa? |
+|------------|---------|---------|--------|--------------------|--------|
+|Todo ok     | 'Spray' |   5000  | false  |        false       |   SI   |
+|Sin nombre  |undefined|   5000  |  true  |        false       |NO (400)|
+|Sin precio  | 'Spray' |undefined| false  |        true        |NO (400)|
+|Sin ambos   |undefined|undefined|  true  |        true        |NO (400)|
+|Precio cero | 'Spray' |   0     | false  |        false       |   SI   |
+|Nombre vacío|   ''    |   5000  |  true  |        false       |NO (400)|
 
 !nombre atrapa undefined, null, '' (vacío) y false
 precio === undefined solo atrapa cuando NO se envió el campo
 Se usa !nombre porque no aceptamos nombre vacío
 Se usa === undefined en precio porque 0 podría ser válido
-Evita doble validación
+Evita doble validación.
 
 > Etapas pendientes
 
