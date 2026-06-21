@@ -10,6 +10,7 @@ export const getAll = async () => {
   return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 };
 
+
 // Obtener un producto por ID
 export const getById = async (id) => {
   const docSnap = await getDoc(doc(db, 'products', id));

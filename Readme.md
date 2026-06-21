@@ -101,12 +101,7 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 - Controladores pasan a async/await con try/catch
 - IDs pasan de números (parseInt) a strings (Firestore document IDs)
 
-> Etapas pendientes
-
-- Seeder de datos
-- Autenticación JWT
-
-> Manejo de undefined y validaciones:
+> Manejo de undefined y validaciones: facilita disminuir la cantidad de validaciones.
 
 | Escenario  |  nombre |  precio |!nombre |precio === undefined|  Pasa? |
 |------------|---------|---------|--------|--------------------|--------|
@@ -123,14 +118,52 @@ Se usa !nombre porque no aceptamos nombre vacío
 Se usa === undefined en precio porque 0 podría ser válido
 Evita doble validación.
 
-> Etapas pendientes
+> Etapa 8 - Seeder (branch: 08-seeder) COMPLETADA
 
-- Conexión con Firebase Firestore
-- Configuración de dotenv
-- Autenticación JWT
-- Seeder de datos
+- Script de carga inicial de productos en Firestore
+Verifica si ya existen datos antes de cargar (evita duplicados)
+- Usa el modelo Product para crear cada documento
+Script ejecutable con npm run seed
 
-> Delimitación de responsabilidades utilizadas en este proyecto
+> Etapa 9 - Auth JWT + corrección de rutas (branch: 09-auth-jwt) COMPLETADA
+
+- Creación de capa de autenticación con JWT
+- Usuarios hardcodeados (admin/123456, user/123456)
+- Middleware validateToken para proteger rutas (401/403)
+- Rutas protegidas: POST /api/products/create, PUT, DELETE
+- Rutas públicas: GET /api/products, GET /api/products/:id
+- Corrección de rutas a /api/products según consignas
+- dotenv.config() centralizado en index.js
+
+> Estructura final
+
+api_catalogo_productos/
+├── seeders/
+│   └── products.seeder.js
+├── src/
+│   ├── config/
+│   │   └── firebase.js
+│   ├── controllers/
+│   │   ├── products.controller.js
+│   │   └── auth.controller.js
+│   ├── middlewares/
+│   │   └── auth.middleware.js
+│   ├── models/
+│   │   └── products.model.js
+│   ├── routes/
+│   │   ├── products.routes.js
+│   │   └── auth.routes.js
+│   └── services/
+│       ├── products.service.js
+│       └── auth.service.js
+├── index.js
+├── package.json
+├── .env
+├── .env-example
+├── .gitignore
+└── Readme.md
+
+> Delimitación de responsabilidades.
 
 Router: recibe la petición HTTP y la pasa al controller
 Controller: extrae los datos del request, valida, y llama al service
@@ -141,5 +174,5 @@ A modo de ejemplo:
 
 Llega un POST con { nombre: 'Spray', precio: 5000 }
 El `controller` extrae esos datos del body y los manda al `service` como **data**
-El service crea un `objeto` usando el modelo: new Product(**data**) → el modelo arma { nombre: 'Spray', precio: 5000, categoria: 'general', stock: 0 }
+El service crea un `objeto` usando el modelo: new Product(**data**) -> el modelo arma { nombre: 'Spray', precio: 5000, categoria: 'general', stock: 0 }
 El `service` guarda ese `objeto` en la base de datos (hoy en el array, después en Firestore)
