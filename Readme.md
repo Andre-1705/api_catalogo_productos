@@ -61,7 +61,7 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 - .gitignore, .env-example
 - Repositorio en GitHub
 
-> Etapa 2 - Rutas CRUD inline (branch: 02-server-con-rutas-inline)
+> Etapa 2 - Rutas CRUD inline (branch: 02-server-con-rutas-inline) COMPLETADA
 
 - Agregados cors y body-parser.json() como middlewares
 - Rutas de productos CRUD (GET, POST, PUT, DELETE) en index.js
@@ -69,7 +69,7 @@ Este proyecto se construye por etapas, cada una en un branch separado. El flujo 
 - Middleware 404 para rutas inexistentes
 - Validación básica (nombre y precio obligatorios)
 
-> Etapa 3 - Rutas separadas (branch: 03-rutas-separadas)* COMPLETADA
+> Etapa 3 - Rutas separadas (branch: 03-rutas-separadas) COMPLETADA
 
 - Extracción de rutas a archivo independiente
 - index.js se convierte en archivo de configuración del servidor
@@ -134,6 +134,7 @@ Script ejecutable con npm run seed
 - Rutas públicas: GET /api/products, GET /api/products/:id
 - Corrección de rutas a /api/products según consignas
 - dotenv.config() centralizado en index.js
+- dotenv.config() en index.js y en firebase.js (necesario por ES Modules: los imports se ejecutan antes que el código del archivo que los llama)
 
 > Estructura final
 
@@ -176,3 +177,55 @@ Llega un POST con { nombre: 'Spray', precio: 5000 }
 El `controller` extrae esos datos del body y los manda al `service` como **data**
 El service crea un `objeto` usando el modelo: new Product(**data**) -> el modelo arma { nombre: 'Spray', precio: 5000, categoria: 'general', stock: 0 }
 El `service` guarda ese `objeto` en la base de datos (hoy en el array, después en Firestore)
+
+> Endpoints
+
+| Método |         Ruta         |  Auth  |            Descripción             |
+|--------|----------------------|--------|------------------------------------|
+| GET    |           /          |   No   | Estado del servidor                |
+| GET    | /api/products        |   No   | Obtener todos los productos        |
+| GET    | /api/products/:id    |   No   | Obtener producto por ID            |
+| POST   | /api/products/create | Si(JWT)| Crear un producto                  |
+| PUT    | /api/products/:id    | Si(JWT)| Actualizar producto                |
+| DELETE | /api/products/:id    | Si(JWT)| Eliminar producto                  |
+| POST   | /auth/login          |   No   | Iniciar sesión, devuelve token JWT |
+
+> Autenticación:
+
+Las rutas protegidas requieren enviar el token en el header Authorization:
+
+> Authorization: Bearer
+
+Hacer POST a /auth/login con { "username": "admin", "password": "123456" }
+Copiar el token devuelto
+Enviarlo en las peticiones protegidas
+Ejemplo con curl:
+
+> Login
+
+curl -X POST [http://localhost:3000/auth/login] -H "Content-Type: application/json" -d "{"username":"admin","password":"123456"}"
+
+> Crear producto (con token)
+
+curl -X POST [http://localhost:3000/api/products/create] -H "Content-Type: application/json" -H "Authorization: Bearer TU_TOKEN" -d "{"nombre":"Spray","precio":5000}"
+
+> Usuarios disponibles:
+
+- admin/123456 (administrador)
+- user/123456 (usuario)
+- Los tokens expiran a las 2 horas.
+
+### Deploy
+
+> El proyecto está deployado en Vercel:
+
+URL: [https://api-catalogo-productos.vercel.app]
+Repositorio: [https://github.com/Andre-1705/api_catalogo_productos]
+
+Para probar el deploy:
+
+GET [https://api-catalogo-productos.vercel.app/api/products] (json con productos)
+
+POST [https://api-catalogo-productos.vercel.app/auth/login] (login con body JSON)
+
+Nota: las rutas POST no se pueden probar directamente en el navegador, usar Postman o curl.
